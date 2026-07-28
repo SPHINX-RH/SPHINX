@@ -1,0 +1,13 @@
+{
+  "name": "sphinx-agent",
+  "version": "0.1.0",
+  "description": "Off-chain AI agent — polls SPHINX venues, compares quotes, publishes recommendations",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "once": "node src/index.js --once"
+  },
+  "dependencies": {
+    "ethers": "^6.13.0"
+  }
+}

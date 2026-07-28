@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SPHINX · App — Venues, Recommendations &amp; Swap</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23070b08'/><path d='M8 20 L14 12 L18 16 L24 8' stroke='%2316a97a' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#060907; --ink-2:#0b120d; --ink-3:#101a13;
+  --paper:#fbf9f4; --paper-dim:rgba(251,249,244,.74); --paper-faint:rgba(251,249,244,.48);
+  --emerald:#24c690; --emerald-2:#1ec78a; --amber:#e6b567; --red:#e2755a;
+  --line:rgba(251,249,244,.12); --line-2:rgba(251,249,244,.22);
+  --display:'Bricolage Grotesque','Inter',sans-serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
+body{font-family:var(--body);background:var(--ink);color:var(--paper);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+code{font-family:var(--mono)}
+
+canvas#bg{display:block;position:fixed;inset:-1px;width:calc(100% + 2px);height:calc(100% + 2px);z-index:0;pointer-events:none}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(6,9,7,.6), transparent 55%),
+    radial-gradient(ellipse 100% 70% at 50% 100%, rgba(6,9,7,.65), transparent 55%);
+}
+main,nav{position:relative;z-index:2}
+
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;gap:14px;padding:18px 32px;
+  background:linear-gradient(to bottom, rgba(6,9,7,.72), rgba(6,9,7,.35));
+  backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
+}
+nav .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;letter-spacing:.3px}
+nav .logo svg{width:18px;height:18px}
+nav .back{margin-left:auto;font-size:12.5px;color:var(--paper-dim);transition:color .25s}
+nav .back:hover{color:var(--paper)}
+.btn-wallet{
+  padding:9px 18px;border-radius:99px;border:1px solid var(--line-2);background:transparent;
+  color:var(--paper);font:600 12.5px 'Inter';cursor:pointer;transition:all .25s;
+}
+.btn-wallet:hover{border-color:var(--paper)}
+.btn-wallet.connected{background:rgba(31,174,125,.12);border-color:var(--emerald-2);color:var(--emerald-2)}
+
+main{padding:118px 28px 64px;max-width:920px;margin:0 auto}
+
+.page-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:30px}
+.page-top h1{font-family:var(--display);font-weight:700;font-size:2.1rem;letter-spacing:-.5px;text-shadow:0 1px 16px rgba(6,9,7,.6)}
+.page-top p{font-size:13px;color:var(--paper-dim);margin-top:6px;text-shadow:0 1px 12px rgba(6,9,7,.6)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font:500 11px var(--mono);color:var(--paper-dim);padding:7px 13px;border:1px solid var(--line-2);border-radius:99px;cursor:default}
+.chip.click{cursor:pointer;transition:border-color .25s}
+.chip.click:hover{border-color:var(--paper)}
+
+.stat-minis{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:28px}
+.stat-mini{background:rgba(11,18,13,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:22px 18px;text-align:center}
+.stat-mini .bn{font-family:var(--mono);font-size:26px;font-weight:600;color:var(--emerald-2);margin-bottom:4px}
+.stat-mini .lb{font-size:10px;color:var(--paper-faint);text-transform:uppercase;letter-spacing:1px}
+
+.tabs{display:flex;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:24px;width:fit-content}
+.tab{padding:10px 22px;font:500 12.5px 'Inter';background:rgba(11,18,13,.62);color:var(--paper-dim);cursor:pointer;border:none;transition:all .25s}
+.tab.active{background:var(--paper);color:var(--ink);font-weight:600}
+
+.panel{display:none}
+.panel.active{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+.card{background:rgba(11,18,13,.62);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.card h3{font-family:var(--display);font-weight:600;font-size:1.15rem;margin-bottom:18px;color:var(--paper)}
+
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}
+.row:last-child{border:none}
+.row .addr{color:var(--paper-faint);font-family:var(--mono);font-size:11.5px;margin-left:8px}
+.val{font-family:var(--mono);font-size:12.5px;font-weight:600}
+.val.green{color:var(--emerald-2)}
+.val.red{color:var(--red)}
+
+.field{margin-bottom:16px}
+.field label{display:block;font:600 10px 'Inter';color:var(--paper-faint);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.field input,.field select{
+  width:100%;padding:13px 15px;font:500 13.5px var(--mono);border:1px solid var(--line-2);
+  border-radius:10px;background:rgba(16,26,19,.7);color:var(--paper);outline:none;transition:border-color .25s;
+}
+.field input::placeholder{color:var(--paper-faint);font-family:var(--body)}
+.field input:focus,.field select:focus{border-color:var(--emerald-2)}
+
+.btn-swap{
+  width:100%;padding:14px;font:600 14px 'Inter';border-radius:99px;border:none;
+  background:var(--emerald-2);color:var(--ink);cursor:pointer;transition:opacity .25s;margin-top:6px;
+}
+.btn-swap:hover{opacity:.88}
+.btn-swap:disabled{opacity:.3;cursor:not-allowed}
+
+.preview{padding:16px 18px;border:1px solid var(--line);border-radius:12px;margin:16px 0;background:rgba(16,26,19,.7)}
+.preview .row{font-size:12.5px}
+
+.feed-item{padding:16px 18px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:rgba(16,26,19,.7)}
+.feed-item .meta{font:600 10px var(--mono);color:var(--paper-faint);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.feed-item .amt{font:600 15px var(--mono);color:var(--emerald-2)}
+.feed-item .reason{font-size:12px;line-height:1.6;color:var(--paper-dim);margin-top:6px}
+
+.empty{text-align:center;padding:52px 20px;color:var(--paper-faint);font-size:13px}
+.empty .sub{font-size:11.5px;margin-top:6px;color:var(--paper-faint);opacity:.7}
+
+/* ── Sample content (shown before wallet connect) ── */
+.venue-sample{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:rgba(16,26,19,.5)}
+.venue-sample .vs-icon{width:32px;height:32px;border-radius:8px;background:rgba(31,174,125,.08);display:flex;align-items:center;justify-content:center;font:600 12px var(--mono);color:var(--emerald-2);flex:none}
+.venue-sample .vs-info{flex:1;min-width:0}
+.venue-sample .vs-name{font:600 12px 'Inter';color:var(--paper);margin-bottom:2px}
+.venue-sample .vs-addr{font:11px var(--mono);color:var(--paper-faint)}
+.venue-sample .vs-status{font:500 10px var(--mono);color:var(--emerald-2);text-transform:uppercase;letter-spacing:.5px}
+.info-box{background:rgba(31,174,125,.04);border:1px solid rgba(31,174,125,.1);border-radius:14px;padding:20px 22px;margin-bottom:14px;display:flex;align-items:flex-start;gap:14px}
+.info-box .ib-icon{font-size:20px;flex:none;margin-top:2px}
+.info-box .ib-text{font-size:12.5px;line-height:1.65;color:var(--paper-dim)}
+.info-box .ib-text b{color:var(--paper);font-weight:600}
+
+@media(max-width:700px){
+  .page-top{flex-direction:column}
+  .stat-minis{grid-template-columns:1fr}
+  main{padding-top:104px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<nav>
+  <a href="/" class="logo">
+    <svg viewBox="0 0 22 22" fill="none"><rect width="22" height="22" rx="6" fill="#0e1712"/><path d="M5.5 14 L9.5 8.2 L12.2 11 L16.5 4.8" stroke="#24c690" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    SPHINX
+  </a>
+  <div class="links">
+    <a href="/">Home</a>
+    <a href="docs.html">Docs</a>
+  </div>
+  <a href="../" class="back">← Home</a>
+  <button class="btn-wallet" id="wallet-btn" onclick="connectWallet()">Connect Wallet</button>
+</nav>
+
+<main>
+  <div class="page-top">
+    <div>
+      <h1>App</h1>
+      <p>4 venues · 24+ recommendations · $0 agent custody</p>
+    </div>
+    <div class="chips">
+      <span class="chip">RHC · 4663</span>
+      <span class="chip">CA: SOON</span>
+    </div>
+  </div>
+
+  <div class="stat-minis">
+    <div class="stat-mini"><div class="bn" id="stat-venues">4</div><div class="lb">Active Venues</div></div>
+    <div class="stat-mini"><div class="bn" id="stat-feeds">24</div><div class="lb">Recent Recs</div></div>
+    <div class="stat-mini"><div class="bn" id="stat-last">#9,124,077</div><div class="lb">Last Rec Block</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('venues',event)">Venues</button>
+    <button class="tab" onclick="switchTab('recommendations',event)">Recommendations</button>
+    <button class="tab" onclick="switchTab('swap',event)">Swap</button>
+  </div>
+
+  <div class="panel active" id="panel-venues">
+    <div class="info-box">
+      <div class="ib-icon">🏦</div>
+      <div class="ib-text"><b>4 venues registered</b> on Robinhood Chain. SPHINX compares live quotes across all of them — Arcus, DEX B, DEX C, and an RFQ desk. Connect your wallet to see real-time data from the router contract.</div>
+    </div>
+    <div class="card">
+      <h3>Registered venues</h3>
+      <div id="venue-list">
+        <div class="venue-sample"><div class="vs-icon">V0</div><div class="vs-info"><div class="vs-name">Arcus DEX</div><div class="vs-addr">0x4e0d…7D02</div></div><div class="vs-status">● Active</div></div>
+        <div class="venue-sample"><div class="vs-icon">V1</div><div class="vs-info"><div class="vs-name">DEX B</div><div class="vs-addr">0x7a2b…c91d</div></div><div class="vs-status">● Active</div></div>
+        <div class="venue-sample"><div class="vs-icon">V2</div><div class="vs-info"><div class="vs-name">DEX C</div><div class="vs-addr">0xb793…2e4f</div></div><div class="vs-status">● Active</div></div>
+        <div class="venue-sample"><div class="vs-icon">V3</div><div class="vs-info"><div class="vs-name">RFQ Desk</div><div class="vs-addr">0xd815…a37e</div></div><div class="vs-status">● Active</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-recommendations">
+    <div class="card">
+      <h3>Latest recommendations</h3>
+      <div id="rec-feed">
+        <div class="feed-item"><div class="meta">Block #9,124,033 · Venue #3</div><div class="amt">→ 916.10 NVDAon</div><div class="reason">Venue #3 (RFQ) +0.28% vs Venue #0 (Arcus) — tighter spread on institutional flow</div></div>
+        <div class="feed-item"><div class="meta">Block #9,124,044 · Venue #2</div><div class="amt">→ 1,036.40 AAPLon</div><div class="reason">Venue #2 (DEX C) +0.28% vs Venue #0 (Arcus) — deeper pool depth</div></div>
+        <div class="feed-item"><div class="meta">Block #9,124,055 · Venue #3</div><div class="amt">→ 789.20 TSLAon</div><div class="reason">Venue #3 (RFQ) +0.28% vs Venue #0 (Arcus) — lower impact on size</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-swap">
+    <div class="card">
+      <h3>Execute swap</h3>
+      <div class="field"><label>Token in</label><input type="text" id="swap-token-in" placeholder="0x… token address"></div>
+      <div class="field"><label>Token out</label><input type="text" id="swap-token-out" placeholder="0x… token address"></div>
+      <div class="field"><label>Amount in</label><input type="text" id="swap-amount" placeholder="Amount in token units"></div>
+      <div class="field"><label>Venue</label><select id="swap-venue"><option value="">Select venue…</option></select></div>
+      <div class="field"><label>Min amount out</label><input type="text" id="swap-min-out" placeholder="0 = use best quote"></div>
+      <div class="preview">
+        <div class="row"><span>Best quote</span><span class="val green" id="swap-quote">—</span></div>
+        <div class="row"><span>Estimated fee</span><span class="val">~0.0001 RHC</span></div>
+      </div>
+      <button class="btn-swap" id="swap-btn" onclick="executeSwap()" disabled>Connect wallet to swap</button>
+    </div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/ethers@6/dist/ethers.min.js"></script>
+<script src="../engine/shredder.js"></script>
+<script src="../engine/aratanagara.js"></script>
+<script>
+// ── Animated WebGL background ──
+(function(){
+  const canvas=document.getElementById('bg');
+  if(!canvas)return;
+  const gl=canvas.getContext('webgl2',{alpha:true,antialias:true,premultipliedAlpha:false});
+  if(!gl){console.warn('WebGL2 not supported — background disabled');return}
+  function resize(){
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    const w=canvas.offsetWidth*dpr,h=canvas.offsetHeight*dpr;
+    if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}
+  }
+  resize();window.addEventListener('resize',resize);
+  const Engine=window.Shredder||window.Aratanagara;
+  if(!Engine){console.warn('No WebGL engine available');return}
+  Engine.init(gl);
+  let last=0;
+  function loop(ts){
+    const dt=last?(ts-last)*.001:.016; last=ts;
+    resize();
+    if(Engine.update)Engine.update(dt);
+    if(Engine.render)Engine.render({fbo:null,w:canvas.width,h:canvas.height});
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+<script>
+const RHC_CHAIN={chainId:'0x1237',chainName:'Robinhood Chain',nativeCurrency:{name:'RHC',symbol:'RHC',decimals:18},rpcUrls:['https://rpc.mainnet.chain.robinhood.com'],blockExplorerUrls:['https://robinhoodchain.blockscout.com']};
+const ROUTER_ADDR=localStorage.getItem('sphinx_router')||'';
+const ROUTER_ABI=["function bestVenue(address,address,uint256) view returns (uint256,uint256)","function venues(uint256) view returns (address,bool)","function venueCount() view returns (uint256)","function executeSwap(uint256,address,address,uint256,uint256) returns (uint256)","event Recommendation(address indexed,address indexed,uint256,uint256 indexed,uint256,string)"];
+let provider,signer,router,walletAddr;
+
+async function connectWallet(){
+  if(walletAddr)return disconnectWallet();
+  if(!window.ethereum)return alert('Install MetaMask or Rabby');
+  try{
+    await window.ethereum.request({method:'wallet_addEthereumChain',params:[RHC_CHAIN]});
+    await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x1237'}]});
+    const a=await window.ethereum.request({method:'eth_requestAccounts'});
+    provider=new ethers.BrowserProvider(window.ethereum);
+    signer=await provider.getSigner();
+    walletAddr=a[0];
+    updateUI();
+    if(ROUTER_ADDR)initRouter();
+    window.ethereum.on('accountsChanged',disconnectWallet);
+    window.ethereum.on('chainChanged',()=>location.reload());
+  }catch(e){console.error(e)}
+}
+function disconnectWallet(){walletAddr=null;provider=null;signer=null;router=null;updateUI()}
+function updateUI(){
+  const b=document.getElementById('wallet-btn');
+  if(walletAddr){b.textContent=`${walletAddr.slice(0,6)}…${walletAddr.slice(-4)}`;b.classList.add('connected');b.onclick=disconnectWallet}
+  else{b.textContent='Connect Wallet';b.classList.remove('connected');b.onclick=connectWallet}
+}
+async function initRouter(){
+  if(!ROUTER_ADDR)return;
+  router=new ethers.Contract(ROUTER_ADDR,ROUTER_ABI,provider);
+  document.getElementById('ca-badge').textContent=`CA: ${ROUTER_ADDR.slice(0,6)}…${ROUTER_ADDR.slice(-4)}`;
+  loadVenues();loadRecs();
+}
+function copyCA(){
+  if(!ROUTER_ADDR)return;
+  navigator.clipboard.writeText(ROUTER_ADDR);
+  const t=document.getElementById('ca-badge');
+  t.textContent='Copied!';
+  setTimeout(()=>t.textContent=`CA: ${ROUTER_ADDR.slice(0,6)}…${ROUTER_ADDR.slice(-4)}`,1500);
+}
+async function loadVenues(){
+  if(!router)return;
+  try{
+    const c=Number(await router.venueCount());
+    document.getElementById('stat-venues').textContent=c;
+    let h='';
+    const s=document.getElementById('swap-venue');
+    s.innerHTML='<option value="">Select venue…</option>';
+    for(let i=0;i<c;i++){
+      const[a,ac]=await router.venues(i);
+      h+=`<div class="row"><span>Venue #${i}<span class="addr">${a.slice(0,10)}…</span></span><span class="val ${ac?'green':'red'}">${ac?'● Active':'○ Inactive'}</span></div>`;
+      if(ac)s.innerHTML+=`<option value="${i}">Venue #${i}</option>`;
+    }
+    document.getElementById('venue-list').innerHTML=h||'<div class="empty">No venues registered</div>';
+  }catch(e){}
+}
+async function loadRecs(){
+  if(!router)return;
+  try{
+    const f=router.filters.Recommendation();
+    const ev=await router.queryFilter(f,-50);
+    document.getElementById('stat-feeds').textContent=ev.length;
+    if(!ev.length){document.getElementById('rec-feed').innerHTML='<div class="empty">No recommendations yet</div>';return}
+    if(ev.length>0)document.getElementById('stat-last').textContent=`#${ev[ev.length-1].blockNumber}`;
+    let h='';
+    for(const e of ev.reverse().slice(0,10))
+      h+=`<div class="feed-item"><div class="meta">Block #${e.blockNumber} · Venue #${e.args[2]}</div><div class="amt">→ ${ethers.formatEther(e.args[3])} output</div><div class="reason">${e.args[4]||''}</div></div>`;
+    document.getElementById('rec-feed').innerHTML=h;
+  }catch(e){}
+}
+async function getQuote(){
+  const ti=document.getElementById('swap-token-in').value.trim(),to=document.getElementById('swap-token-out').value.trim(),am=document.getElementById('swap-amount').value.trim(),vi=document.getElementById('swap-venue').value;
+  if(!ti||!to||!am||vi==='')return;
+  try{const[,o]=await router.bestVenue(ti,to,ethers.parseEther(am));document.getElementById('swap-quote').textContent=ethers.formatEther(o)}
+  catch(e){document.getElementById('swap-quote').textContent='Error'}
+}
+async function executeSwap(){
+  if(!signer||!router)return alert('Connect wallet first');
+  const b=document.getElementById('swap-btn');b.disabled=true;b.textContent='Executing…';
+  try{
+    const vi=document.getElementById('swap-venue').value,ti=document.getElementById('swap-token-in').value.trim(),to=document.getElementById('swap-token-out').value.trim(),am=document.getElementById('swap-amount').value.trim(),mn=document.getElementById('swap-min-out').value.trim()||'0';
+    const tx=await router.connect(signer).executeSwap(vi,ti,to,ethers.parseEther(am),ethers.parseEther(mn));
+    await tx.wait();
+    b.textContent='✓ Swapped';
+    setTimeout(()=>{b.textContent='Execute Swap';b.disabled=false},3000);
+  }catch(e){
+    b.textContent='✗ Failed';b.disabled=false;
+    setTimeout(()=>{b.textContent='Execute Swap'},2000);
+  }
+}
+function switchTab(n,ev){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  ev.target.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+n).classList.add('active');
+  if(n==='venues')loadVenues();
+  if(n==='recommendations')loadRecs();
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  if(ROUTER_ADDR)document.getElementById('ca-badge').textContent=`CA: ${ROUTER_ADDR.slice(0,6)}…${ROUTER_ADDR.slice(-4)}`;
+  ['swap-token-in','swap-token-out','swap-amount','swap-venue'].forEach(id=>{
+    const e=document.getElementById(id);
+    if(e)e.addEventListener('input',getQuote);
+  });
+});
+</script>
+</body>
+</html>

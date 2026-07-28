@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPHINX · Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--g:#24c690;--g2:#1ec78a;--bk:#060907;--w:#fbf9f4;--g4:#888;--g6:#555;--code:#0b120d;--ok:#24c690;--amb:#e6b567;--line:rgba(251,249,244,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bk);color:var(--w);font-family:Inter;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:64px 24px 40px}
+
+/* Hero */
+.hero{text-align:center;margin-bottom:44px;opacity:0;transform:translateY(16px);animation:fadeUp .7s .1s ease-out forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.hero .badge{display:inline-flex;align-items:center;gap:7px;background:rgba(36,198,144,.1);color:var(--g);font:600 10.5px 'JetBrains Mono',monospace;padding:7px 18px;border-radius:99px;margin-bottom:20px;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(36,198,144,.18)}
+.hero .badge .bdot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(36,198,144,.4)}50%{opacity:.7;box-shadow:0 0 6px 2px rgba(36,198,144,.2)}}
+.hero h1{font:800 clamp(34px,5.5vw,58px)/1.06 Inter;letter-spacing:-.04em;margin-bottom:10px}
+.hero h1 span{color:var(--g)}
+.hero .sub{font:400 14px/1.6 Inter;color:var(--g6);max-width:520px;margin:0 auto}
+
+/* LIVE PANEL */
+.live-panel{background:var(--code);border:1px solid var(--line);border-radius:22px;overflow:hidden;margin:32px 0;position:relative;opacity:0;transform:translateY(20px);animation:panelIn .7s .35s ease-out forwards}
+@keyframes panelIn{to{opacity:1;transform:translateY(0)}}
+.live-panel .glow{position:absolute;top:-30%;left:-30%;width:160%;height:160%;background:radial-gradient(circle at 50% 0%,rgba(36,198,144,.05) 0%,transparent 55%);pointer-events:none;transition:opacity 1s}
+.live-panel .glow.pulse{opacity:1.6}
+.panel-top{display:flex;align-items:center;gap:14px;padding:15px 22px;border-bottom:1px solid var(--line)}
+.panel-top .logo{font:700 15px Inter;display:flex;align-items:center;gap:8px}
+.panel-top .logo svg{width:17px;height:17px}
+.panel-top .status{display:flex;align-items:center;gap:6px;font:500 10.5px 'JetBrains Mono',monospace;color:var(--ok)}
+.panel-top .status .d{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 1.5s infinite}
+.panel-top .info{flex:1;text-align:right;font:400 10.5px 'JetBrains Mono',monospace;color:var(--g4)}
+.panel-body{padding:26px 28px 20px;position:relative;z-index:1}
+
+/* Timeline */
+.timeline{display:flex;gap:0;margin-bottom:22px}
+.tl-step{flex:1;text-align:center;position:relative;padding:16px 8px 12px;border-radius:10px;transition:all .5s cubic-bezier(.4,0,.2,1)}
+.tl-step .dot{width:34px;height:34px;border-radius:50%;margin:0 auto 9px;display:flex;align-items:center;justify-content:center;font:700 13px 'JetBrains Mono',monospace;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.06);transition:all .5s cubic-bezier(.4,0,.2,1)}
+.tl-step .label{font:600 10.5px 'JetBrains Mono',monospace;color:var(--g4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;transition:all .5s}
+.tl-step .sub{font:400 11px Inter;color:rgba(251,249,244,.14);transition:all .5s}
+.tl-step::after{content:'';position:absolute;top:33px;right:-50%;width:100%;height:1px;background:var(--line);z-index:-1}
+.tl-step:last-child::after{display:none}
+.tl-step.active{background:rgba(36,198,144,.03)}
+.tl-step.active .dot{background:var(--g);border-color:var(--g);color:var(--bk);box-shadow:0 0 22px rgba(36,198,144,.3);transform:scale(1.08)}
+.tl-step.active .label{color:var(--g)}
+.tl-step.active .sub{color:rgba(251,249,244,.5)}
+.tl-step.done .dot{background:rgba(36,198,144,.2);border-color:rgba(36,198,144,.3);color:var(--g)}
+.tl-step.done .label{color:var(--g)}
+
+/* Venue cards */
+.quotes-label{font:600 10px 'JetBrains Mono',monospace;color:var(--g4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;opacity:0;transition:opacity .3s}
+.quotes-label.on{opacity:1}
+.quotes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.q-card{background:rgba(255,255,255,.015);border:1px solid var(--line);border-radius:12px;padding:14px 12px;text-align:center;transition:all .5s cubic-bezier(.4,0,.2,1);opacity:0;transform:translateY(10px) scale(.96)}
+.q-card.in{opacity:1;transform:translateY(0) scale(1)}
+.q-card .q-name{font:600 10.5px 'JetBrains Mono',monospace;color:var(--g4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.q-card .q-rate{font:700 19px 'JetBrains Mono',monospace;color:var(--w);margin-bottom:2px;transition:color .5s}
+.q-card .q-delta{font:500 10.5px 'JetBrains Mono',monospace;transition:color .5s}
+.q-card.best{border-color:rgba(36,198,144,.3);background:rgba(36,198,144,.05);transform:scale(1.02)}
+.q-card.best .q-name{color:var(--g)}
+.q-card.best .q-rate{color:var(--g)}
+.q-card.best .q-delta{color:var(--g)}
+
+/* Event feed */
+.feed-label{font:600 10px 'JetBrains Mono',monospace;color:var(--g4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;opacity:0;transition:opacity .3s}
+.feed-label.on{opacity:1}
+.rec-event{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:rgba(36,198,144,.02);border:1px solid var(--line);margin-bottom:6px;opacity:0;transform:translateX(-16px);animation:slideIn .45s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes slideIn{to{opacity:1;transform:translateX(0)}}
+.rec-event .rec-icon{width:28px;height:28px;border-radius:7px;background:rgba(36,198,144,.1);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.rec-event .rec-main{flex:1;min-width:0}
+.rec-event .rec-pair{color:var(--w);font:600 11.5px Inter;margin-bottom:1px}
+.rec-event .rec-desc{color:rgba(251,249,244,.55);font-size:11px;line-height:1.5}
+.rec-event .rec-meta{text-align:right;flex-shrink:0}
+.rec-event .rec-block{font:11px 'JetBrains Mono',monospace;color:var(--g)}
+.rec-event .rec-latency{font:9.5px 'JetBrains Mono',monospace;color:var(--g4);margin-top:3px}
+
+/* Bottom bar */
+.bottom-bar{display:flex;align-items:center;gap:14px;padding:12px 22px;border-top:1px solid var(--line);background:rgba(0,0,0,.2)}
+.bottom-bar .metric{display:flex;align-items:center;gap:8px}
+.bottom-bar .metric .m-val{font:600 12.5px Inter;color:var(--w);min-width:32px;transition:all .3s}
+.bottom-bar .metric .m-lbl{font:400 9.5px 'JetBrains Mono',monospace;color:var(--g4);text-transform:uppercase;letter-spacing:.05em}
+.bottom-bar .spacer{flex:1}
+.bottom-bar .loop-hint{font:400 10px 'JetBrains Mono',monospace;color:var(--g4);opacity:.6}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:32px 0;opacity:0;transform:translateY(12px);animation:fadeUp .6s .5s ease-out forwards}
+.stat{background:var(--code);border:1px solid var(--line);border-radius:16px;padding:24px 20px;text-align:center;transition:border-color .3s}
+.stat:hover{border-color:rgba(36,198,144,.15)}
+.stat .val{font:700 26px Inter;color:var(--w);letter-spacing:-.02em}
+.stat .lbl{font:600 9.5px 'JetBrains Mono',monospace;color:var(--g4);text-transform:uppercase;letter-spacing:.08em;margin-top:8px}
+
+.btns{display:flex;gap:12px;justify-content:center;margin:28px 0;opacity:0;transform:translateY(8px);animation:fadeUp .6s .6s ease-out forwards}
+.btn{font:600 13.5px Inter;padding:13px 26px;border-radius:99px;cursor:pointer;text-decoration:none;border:1px solid var(--line);transition:all .25s;display:inline-flex;align-items:center;gap:8px;color:var(--w);background:transparent}
+.btn-fill{background:var(--g);color:var(--bk);border-color:var(--g)}.btn-fill:hover{opacity:.85;transform:translateY(-1px);box-shadow:0 4px 20px rgba(36,198,144,.2)}
+.btn-out:hover{background:rgba(251,249,244,.03);transform:translateY(-1px)}
+.hint{font:400 11px Inter;color:var(--g4);align-self:center;opacity:.6}
+
+@media(max-width:768px){.timeline{flex-wrap:wrap}.tl-step{flex:0 0 50%}.tl-step::after{display:none}.stats{grid-template-columns:repeat(2,1fr)}.quotes{grid-template-columns:repeat(2,1fr)}.panel-body{padding:16px 14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="bdot"></span> Robinhood Chain · Liquidity Routing</div>
+    <h1>Every venue, compared.<br><span>Best route, your signature.</span></h1>
+    <p class="sub">An off-chain agent polls every DEX venue trading Robinhood Chain Stock Tokens — compares quotes against Chainlink — and recommends the best one. You call the swap with your own slippage floor.</p>
+  </div>
+
+  <div class="live-panel" id="panel">
+    <div class="glow" id="glow"></div>
+    <div class="panel-top">
+      <div class="logo">
+        <svg viewBox="0 0 22 22" fill="none"><rect width="22" height="22" rx="6" fill="#0e1712"/><path d="M5.5 14 L9.5 8.2 L12.2 11 L16.5 4.8" stroke="#24c690" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        SPHINX
+      </div>
+      <div class="status"><span class="d"></span> LIVE</div>
+      <div class="info" id="block-info">RHC · BLOCK 9,124,033</div>
+    </div>
+    <div class="panel-body">
+      <div class="timeline" id="timeline">
+        <div class="tl-step active" id="ts0"><div class="dot">1</div><div class="label">Scan</div><div class="sub">Poll venues</div></div>
+        <div class="tl-step" id="ts1"><div class="dot">2</div><div class="label">Compare</div><div class="sub">vs Chainlink</div></div>
+        <div class="tl-step" id="ts2"><div class="dot">3</div><div class="label">Recommend</div><div class="sub">Publish event</div></div>
+        <div class="tl-step" id="ts3"><div class="dot">4</div><div class="label">Execute</div><div class="sub">Your wallet</div></div>
+      </div>
+      <div class="quotes-label" id="qlabel">Venue Quotes</div>
+      <div class="quotes" id="quotes"></div>
+      <div class="feed-label" id="flabel">Latest Recommendations</div>
+      <div id="rec-feed"></div>
+    </div>
+    <div class="bottom-bar">
+      <div class="metric"><div class="m-val" id="bm1">4</div><div class="m-lbl">Venues</div></div>
+      <div class="metric"><div class="m-val" id="bm2">0</div><div class="m-lbl">Recs</div></div>
+      <div class="metric"><div class="m-val" id="bm3">$0</div><div class="m-lbl">Custody</div></div>
+      <div class="metric"><div class="m-val" id="bm4">—</div><div class="m-lbl">p50</div></div>
+      <div class="spacer"></div>
+      <div class="loop-hint">auto-loop · R to replay</div>
+    </div>
+  </div>
+
+  <div class="stats" id="stats">
+    <div class="stat"><div class="val" id="ss">4</div><div class="lbl">Active Venues</div></div>
+    <div class="stat"><div class="val" id="stt">0</div><div class="lbl">Recommendations</div></div>
+    <div class="stat"><div class="val" id="sr">100%</div><div class="lbl">Oracle-Checked</div></div>
+    <div class="stat"><div class="val" id="sl">—</div><div class="lbl">Avg Latency</div></div>
+  </div>
+
+  <div class="btns" id="btns">
+    <button class="btn btn-fill" onclick="replay()">▶ Replay Demo</button>
+    <a href="app/" class="btn btn-out">Open App →</a>
+    <span class="hint">press R to replay</span>
+  </div>
+</div>
+
+<script>
+const tl=document.querySelectorAll('.tl-step');
+const qEl=document.getElementById('quotes'), qLbl=document.getElementById('qlabel');
+const rEl=document.getElementById('rec-feed'), fLbl=document.getElementById('flabel');
+const bi=document.getElementById('block-info'), glow=document.getElementById('glow');
+const [bm1,bm2,bm3,bm4]=[document.getElementById('bm1'),document.getElementById('bm2'),document.getElementById('bm3'),document.getElementById('bm4')];
+const [ss,stt,sr,sl]=[document.getElementById('ss'),document.getElementById('stt'),document.getElementById('sr'),document.getElementById('sl')];
+let recs=0;
+
+function setStep(n){
+  tl.forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if(i<n)s.classList.add('done');else if(i===n)s.classList.add('active');
+  });
+}
+function pulseGlow(){glow.classList.add('pulse');setTimeout(()=>glow.classList.remove('pulse'),600)}
+function animateVal(el,target,dur=400){
+  const cur=el.textContent;if(cur===String(target))return;
+  const s=parseInt(cur)||0,d=target-s,fps=30,st=dur/1000*fps;let i=0;
+  const t=setInterval(()=>{i++;el.textContent=Math.round(s+d*(i/st));if(i>=st){el.textContent=target;clearInterval(t)}},1000/fps);
+}
+function bumpRecs(){
+  recs++;bm2.textContent=recs;stt.textContent=recs;
+  const lats=['76','82','85','79','91','84','77'];bm4.textContent=lats[recs%7]+'ms';sl.textContent=lats[recs%7]+'ms';
+}
+function updBlock(n){bi.textContent='RHC · BLOCK 9,124,'+(33+n*11)}
+function addRec(symbol,venue,delta,block,ms){
+  const el=document.createElement('div');el.className='rec-event';
+  el.innerHTML=`<div class="rec-icon">▲</div><div class="rec-main"><div class="rec-pair">${symbol} → Venue #${venue}</div><div class="rec-desc">${delta>=0?'+':''}${delta}% vs next best · oracle-verified</div></div><div class="rec-meta"><div class="rec-block">Block #${block}</div><div class="rec-latency">${ms}ms</div></div>`;
+  rEl.appendChild(el);if(rEl.children.length>4)rEl.firstElementChild.remove();
+}
+function showQuotes(quotes,best){
+  qEl.innerHTML='';qLbl.classList.add('on');
+  quotes.forEach((q,i)=>{
+    const c=document.createElement('div');c.className='q-card'+(i===best?' best':'');
+    c.innerHTML=`<div class="q-name">${q[0]}</div><div class="q-rate">${q[1]}</div><div class="q-delta">${q[2]}</div>`;
+    qEl.appendChild(c);
+    setTimeout(()=>c.classList.add('in'),i*100+50);
+  });
+}
+
+async function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+async function run(){
+  rEl.innerHTML='';qEl.innerHTML='';qLbl.classList.remove('on');fLbl.classList.remove('on');
+  recs=0;bm2.textContent='0';stt.textContent='0';bm4.textContent='—';sl.textContent='—';
+  updBlock(0);setStep(0);pulseGlow();
+  await sleep(1200);
+
+  // NVDA
+  setStep(1);pulseGlow();
+  showQuotes([['V0·Arcus','0.9124','−0.12%'],['V1·DEX B','0.9156','+0.23%'],['V2·DEX C','0.9133','−0.02%'],['V3·RFQ','0.9161','+0.28%']],3);
+  await sleep(1400);
+  setStep(2);fLbl.classList.add('on');updBlock(1);addRec('NVDAon/USDG',3,'+0.28',9124033,76);bumpRecs();pulseGlow();
+  await sleep(900);setStep(3);await sleep(600);setStep(-1);await sleep(1000);
+
+  // AAPL
+  setStep(0);await sleep(400);setStep(1);
+  showQuotes([['V0·Arcus','1.0341','+0.05%'],['V1·DEX B','1.0356','+0.20%'],['V2·DEX C','1.0364','+0.28%'],['V3·RFQ','1.0350','+0.14%']],2);
+  await sleep(1200);
+  setStep(2);updBlock(2);addRec('AAPLon/USDG',2,'+0.28',9124044,82);bumpRecs();
+  await sleep(800);setStep(3);await sleep(500);setStep(-1);await sleep(900);
+
+  // TSLA
+  setStep(0);await sleep(400);setStep(1);pulseGlow();
+  showQuotes([['V0·Arcus','0.7845','−0.32%'],['V1·DEX B','0.7876','+0.08%'],['V2·DEX C','0.7865','−0.06%'],['V3·RFQ','0.7892','+0.28%']],3);
+  await sleep(1200);
+  setStep(2);updBlock(3);addRec('TSLAon/USDG',3,'+0.28',9124055,85);bumpRecs();
+  await sleep(800);setStep(3);await sleep(500);setStep(-1);await sleep(1000);
+
+  // GOOGL
+  setStep(0);await sleep(400);setStep(1);
+  showQuotes([['V0·Arcus','1.2540','−0.06%'],['V1·DEX B','1.2567','+0.15%'],['V2·DEX C','1.2553','+0.04%'],['V3·RFQ','1.2538','−0.08%']],1);
+  await sleep(1200);
+  setStep(2);updBlock(4);addRec('GOOGLon/USDG',1,'+0.15',9124066,79);bumpRecs();
+  await sleep(800);setStep(3);await sleep(500);setStep(-1);await sleep(800);
+
+  // MSFT
+  setStep(0);await sleep(400);setStep(1);pulseGlow();
+  showQuotes([['V0·Arcus','0.8923','+0.03%'],['V1·DEX B','0.8951','+0.34%'],['V2·DEX C','0.8936','+0.18%'],['V3·RFQ','0.8915','−0.06%']],1);
+  await sleep(1200);
+  setStep(2);updBlock(5);addRec('MSFTon/USDG',1,'+0.34',9124077,91);bumpRecs();
+  await sleep(800);setStep(3);await sleep(500);
+
+  await sleep(2800);run();
+}
+
+function replay(){run().catch(()=>{})}
+setTimeout(run,600);
+document.addEventListener('keydown',e=>{if(e.key==='r'||e.key==='R')replay()});
+</script>
+</body>
+</html>

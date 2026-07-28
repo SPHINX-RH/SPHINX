@@ -1,0 +1,12 @@
+# Dependencies
+lib/
+node_modules/
+out/
+cache/
+
+# Environment
+.env
+agent/.env
+
+# Build artifacts
+broadcast/
