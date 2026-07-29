@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
 <meta name="description" content="SPHINX — AI-recommended, self-executed liquidity routing for Robinhood Chain Stock Tokens.">
 <title>SPHINX — Best venue, every trade</title>
-<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAACdElEQVR4nO1VTU/cMBCdGdvxstl00aosUtHCiXJBXPkzlJ/HX6AH/gYHDlRC4oYIQptNsk7G08MUbjh8VOqhvKvtefPx5hngE/8a+LbbiIgIIlHkbxIgovc+yzIiQkQAEJGu69q2ZeaPElhrx+OxtVajIyIRKQczr1artm3l5YJsOroxJs9zay0imidYa2OMzOy9R8QQQqKOFAEibmxsWGuVyTnnvffeE1FRfKnr1e3t7cPDQ4wxEYRSZ0Qa3VprrXXOTSaT7e3tk5MfBwffr69/3d/fp6MPVKBNFxERQURrDAAcHh5W1fLs7CyEoKcfJdCRxhijiIiUZXl+/jOEYIwZlBCkWxSfoEV0Xdc0zeXl5c7ON+89M6tk00jdIKKiKBBRNaoSIiKd/M3NTVVVgwSpFmn6eZ7Xda3TBpFIVJYlEc3n8yzLyrJME6RaBADL5TKEMJ/PEZGZyRgAQIS+7+7u7pxzm5ub6Ua9yiqm0+nu7m5VVet1i0gxxr7vmbnruizLNIn3E6gWR6PR0dFRVVV1XTNzCKHve4mRYwwhNE3z0vOBFgGALkHbtldXV3t7e3k+cc5Za40hQNRlTHRpmEA5AODx8XGxWGxtfbXWGlJZ0bO/vp9A3xtDp6en+/v7TdMYY9RWRf4oLfF8wE01/aIojo+PF4vFxcXFet2GEHrm57jMnDCMpMIQnXPT6XQ2m2VZVtc1IvZ9rxPWuDHGqqr6vn8PgXNuNpsZoihiDBEZZmZm/QxEBATqpl6v16ksE2cAMBqNxuOxMQYBBEB9CZ6+s7ZtExvwKgIAMMZ479WO1PV00UIIg5/B26DW/RoH/cR/ht+gPG0PcIf1nwAAAABJRU5ErkJggg==">
+<link rel="icon" href="assets/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
@@ -14,12 +14,12 @@
    TOKENS
    ============================================================ */
 :root{
-  --ink:        #060907;
-  --ink-2:      #0b120d;
-  --ink-3:      #101a13;
+  --ink:        #0c1410;
+  --ink-2:      #111c16;
+  --ink-3:      #16231b;
   --paper:      #fbf9f4;
-  --paper-dim:  rgba(251,249,244,.72);
-  --paper-faint:rgba(251,249,244,.46);
+  --paper-dim:  rgba(251,249,244,.78);
+  --paper-faint:rgba(251,249,244,.52);
   --emerald:    #24c690;
   --emerald-2:  #1ec78a;
   --amber:      #e6b567;
@@ -174,8 +174,6 @@ nav .links{display:flex;gap:28px;margin-left:8px}
 nav .links a{font-size:13px;font-weight:500;color:var(--paper-dim);text-decoration:none;transition:color .25s}
 nav .links a:hover{color:var(--paper)}
 nav .spacer{flex:1}
-nav .clock{font-family:var(--mono);font-size:11px;color:var(--paper-faint);letter-spacing:.5px;margin-right:20px}
-nav .clock b{color:var(--emerald-2);font-weight:600}
 .btn{
   display:inline-flex;align-items:center;gap:8px;
   padding:11px 22px;border-radius:99px;
@@ -188,7 +186,7 @@ nav .clock b{color:var(--emerald-2);font-weight:600}
 .btn-line{border-color:var(--line-2);color:var(--paper)}
 .btn-line:hover{border-color:var(--paper);background:rgba(243,239,230,.04)}
 
-@media (max-width:820px){ nav .links{display:none} nav .clock{display:none} }
+@media (max-width:820px){ nav .links{display:none} }
 
 /* ============================================================
    HERO
@@ -427,7 +425,7 @@ footer .flinks a:hover{color:var(--emerald-2)}
     <a href="docs.html">Docs</a>
   </div>
   <div class="spacer"></div>
-  <span class="clock" id="clock">— : — <b>UTC</b></span>
+  <a href="https://x.com/sphinx_rh" target="_blank" style="display:flex;align-items:center;margin-right:14px;color:var(--paper-dim);transition:color .25s" onmouseover="this.style.color='var(--paper)'" onmouseout="this.style.color='var(--paper-dim)'"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
   <span style="font:600 12px 'Inter';background:rgba(31,174,125,.12);color:var(--emerald-2);padding:6px 12px;border-radius:99px;letter-spacing:.3px;border:1px solid rgba(31,174,125,.22)">CA: SOON</span>
   <a href="app/" class="btn btn-solid">Open App →</a>
 </nav>
@@ -629,6 +627,7 @@ footer .flinks a:hover{color:var(--emerald-2)}
     <div class="flinks">
       <a href="app/">Open App</a>
       <a href="docs.html">Docs</a>
+      <a href="https://x.com/sphinx_rh" target="_blank">X</a>
       <a href="https://github.com/SPHINX-RH/SPHINX" target="_blank">GitHub</a>
       <a href="https://robinhoodchain.blockscout.com" target="_blank">Explorer</a>
     </div>
@@ -640,16 +639,6 @@ footer .flinks a:hover{color:var(--emerald-2)}
 <script src="engine/shredder.js" defer></script>
 <script src="engine/aratanagara.js" defer></script>
 <script>
-// ── Clock (UTC) ──
-function tick(){
-  const d=new Date();
-  const h=String(d.getUTCHours()).padStart(2,'0');
-  const m=String(d.getUTCMinutes()).padStart(2,'0');
-  const el=document.getElementById('clock');
-  if(el) el.innerHTML=`${h}:${m} <b>UTC</b>`;
-}
-tick();setInterval(tick,10000);
-
 // ── Ticker content (illustrative venue quotes) ──
 const tickerData=[
   ['NVDAon / USDG','Venue #0','+0.12%','up'],

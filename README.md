@@ -1,4 +1,16 @@
-# 🦁 SPHINX
+# SPHINX
+
+<p align="center">
+  <img src="web/assets/logo.jpg" alt="SPHINX" width="96" style="border-radius:12px;">
+</p>
+
+<p align="center">
+  <a href="https://sphinxai.fun"><img src="https://img.shields.io/badge/website-sphinxai.fun-1F4B8F" alt="Website"></a>
+  <a href="https://x.com/sphinx_rh"><img src="https://img.shields.io/badge/X-@sphinx__rh-1F4B8F" alt="X"></a>
+  <a href="https://github.com/SPHINX-RH/SPHINX/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
+  <img src="https://img.shields.io/badge/chain-Robinhood%20Chain%20·%204663-8B6914" alt="Chain">
+  <img src="https://img.shields.io/badge/tests-13%2F13-brightgreen" alt="Tests">
+</p>
 
 **AI-recommended, self-executed liquidity routing for Robinhood Chain Stock Tokens.**
 
@@ -82,19 +94,13 @@ sphinx/
 
 ## Quick Start
 
-```bash
-# Install dependencies
-forge install
+1. Visit **[sphinxai.fun/app](https://sphinxai.fun/app)**
+2. Connect your wallet (MetaMask or Rabby)
+3. Switch to **Robinhood Chain (4663)**
+4. Browse live venue recommendations from the agent
+5. Pick a route, set your slippage, and execute
 
-# Run tests
-forge test -vv
-
-# Start web server
-node server.mjs
-# → http://localhost:4200
-# → http://localhost:4200/demo.html
-# → http://localhost:4200/app
-```
+> The agent recommends. The router enforces guardrails. You sign.
 
 ## Deploying to Robinhood Chain (Mainnet)
 
@@ -110,9 +116,10 @@ Chain ID: **4663**. Explorer: [robinhoodchain.blockscout.com](https://robinhoodc
 
 ## Links
 
-- **GitHub**: [SPHINX-RH/SPHINX](https://github.com/SPHINX-RH/SPHINX)
-- **Demo**: Live pipeline simulation at `/demo.html`
-- **App**: Wallet-enabled swap interface at `/app`
+- 🌐 **Website**: [sphinxai.fun](https://sphinxai.fun)
+- 📂 **GitHub**: [SPHINX-RH/SPHINX](https://github.com/SPHINX-RH/SPHINX)
+- 🎮 **Demo**: Live pipeline simulation at [sphinxai.fun/demo](https://sphinxai.fun/demo.html)
+- 📱 **App**: Wallet-enabled swap at [sphinxai.fun/app](https://sphinxai.fun/app)
 
 ## License
 
